@@ -27,6 +27,21 @@
                 //Guardar los cambios en la base de datos
                 context.SaveChanges();
             }
+
+            if (!context.Accounts.Any()) {
+                Client ianClient = context.Clients.FirstOrDefault(cl => cl.Email == "ianb.782@live.com");
+                if(ianClient != null)
+                {
+                    var ianAccounts = new Account[]
+                    {
+                        new Account {Number="VIN001", CreationDate=DateTime.Now, Balance=15000, ClientId=ianClient.Id},
+                        new Account {Number="VIN002", CreationDate=DateTime.Now, Balance=25000, ClientId=ianClient.Id}
+                    };
+
+                    context.Accounts.AddRange(ianAccounts);
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }

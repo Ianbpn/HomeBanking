@@ -1,4 +1,5 @@
 using HomeBanking.Database.Models;
+using HomeBanking.Repositories.Implementations;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<HomeBankingContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection"))
     );
+
+//Add context to the container
+builder.Services.AddScoped<IClientRepository,ClientRepository>();
 
 var app = builder.Build();
 
@@ -39,6 +43,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.MapControllers();
 
 app.UseAuthorization();
 
