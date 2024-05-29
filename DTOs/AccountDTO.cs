@@ -10,12 +10,14 @@ namespace HomeBanking.DTOs
         public DateTime CreationDate { get; set; }
 
         public double Balance { get; set; }
+        public ICollection<TransactionDTO> Transactions { get; set; }
         public AccountDTO(Account account)
         {
             this.Id = account.Id;
             this.Number = account.Number;
             this.CreationDate = account.CreationDate;
             this.Balance = account.Balance;
+            this.Transactions = account.Transactions.Select(t => new TransactionDTO(t)).ToList();
         }
     }
 }

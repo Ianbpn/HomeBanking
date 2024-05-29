@@ -10,14 +10,14 @@ namespace HomeBanking.DTOs
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public ICollection<AccountDTO> Accounts { get; set; }
+        public ICollection<AccountClientDTO> Accounts { get; set; }
         public ClientDTO(Client client)
         {
             this.Id = client.Id;
             this.FirstName = client.FirstName;
             this.LastName = client.LastName;
             this.Email = client.Email;
-            this.Accounts = client.Accounts.Select(a => new AccountDTO(a)).ToList();
+            this.Accounts = client.Accounts.Select(a => new AccountClientDTO(a)).ToList();
         }
     }
 }

@@ -34,11 +34,29 @@
                 {
                     var ianAccounts = new Account[]
                     {
-                        new Account {Number="VIN001", CreationDate=DateTime.Now, Balance=15000, ClientId=ianClient.Id},
-                        new Account {Number="VIN002", CreationDate=DateTime.Now, Balance=25000, ClientId=ianClient.Id}
+                        new Account {Number="IAN001", CreationDate=DateTime.Now, Balance=15000, ClientId=ianClient.Id},
+                        new Account {Number="IAN002", CreationDate=DateTime.Now, Balance=25000, ClientId=ianClient.Id}
                     };
 
                     context.Accounts.AddRange(ianAccounts);
+                    context.SaveChanges();
+                }
+            }
+            if (!context.Transactions.Any())
+            {
+                Account ianAccount1 = context.Accounts.FirstOrDefault(a => a.Number == "IAN001");
+                if (ianAccount1 != null)
+                {
+                    var transaction = new Transaction[]
+                    {
+                        new Transaction {AccountId= ianAccount1.Id,Amount= 25000, Date=DateTime.Now.AddDays(-1),
+                            Description="La Transaccion fue recibida", Type = TransactionType.CREDIT},
+                        new Transaction {AccountId= ianAccount1.Id,Amount= -7000, Date=DateTime.Now.AddHours(-5),
+                            Description="La Compra a en Steam fue realizada con exito", Type = TransactionType.DEBIT},
+                        new Transaction {AccountId= ianAccount1.Id,Amount= -4000, Date=DateTime.Now.AddMinutes(-15),
+                            Description="La transferencia a tu segunda cuenta fue exitosa", Type = TransactionType.DEBIT}
+                    };
+                    context.Transactions.AddRange(transaction);
                     context.SaveChanges();
                 }
             }
