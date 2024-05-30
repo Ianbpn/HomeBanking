@@ -1,7 +1,6 @@
 ﻿using HomeBanking.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using NuGet.Protocol.Core.Types;
 using System.Linq.Expressions;
 
 namespace HomeBanking.Repositories.Implementations

@@ -30,7 +30,7 @@
 
             if (!context.Accounts.Any()) {
                 Client ianClient = context.Clients.FirstOrDefault(cl => cl.Email == "ianb.782@live.com");
-                if(ianClient != null)
+                if (ianClient != null)
                 {
                     var ianAccounts = new Account[]
                     {
@@ -57,6 +57,79 @@
                             Description="La transferencia a tu segunda cuenta fue exitosa", Type = TransactionType.DEBIT}
                     };
                     context.Transactions.AddRange(transaction);
+                    context.SaveChanges();
+                }
+            }
+            if (!context.Loans.Any())
+            {
+                // Primero creo diferentes prestamos para usar
+                var Loan = new Loan[]
+                {
+                    new Loan {Name= "Hipotecario", MaxAmount=1000000, Paymnets="12,24,36,48,60"},
+                    new Loan {Name= "Personal", MaxAmount= 350000, Paymnets="3,6,12,24"},
+                    new Loan {Name= "Automotriz", MaxAmount= 600000, Paymnets="12,24,36,48"},
+                    new Loan {Name= "Amigable", MaxAmount= 200000, Paymnets="3,6,12,24,36,48,60"}
+                };
+                context.Loans.AddRange(Loan);
+                context.SaveChanges();
+
+                //Ahora voy a darle varios prestamos a mi primer usuario
+
+                var client1 = context.Clients.FirstOrDefault(client=>client.Email=="ianb.782@live.com");
+                if (client1!=null)
+                {
+                    //voy a generar manualmente con todos los tipo de prestamo
+                    var loan1 = context.Loans.FirstOrDefault(loan => loan.Name == "Hipotecario");
+                    if (loan1 != null)
+                    {
+                        var clientLoan1 = new ClientLoan
+                        {
+                            Amount = 750000,
+                            ClientId = client1.Id,
+                            LoanId = loan1.Id,
+                            Payments = "60"
+                        };
+                        context.ClienLoans.Add(clientLoan1);
+                    }
+
+                    var loan2 = context.Loans.FirstOrDefault(loan => loan.Name == "Personal");
+                    if (loan2 != null)
+                    {
+                        var clientLoan2 = new ClientLoan
+                        {
+                            Amount = 300000,
+                            ClientId = client1.Id,
+                            LoanId = loan2.Id,
+                            Payments = "12"
+                        };
+                        context.ClienLoans.Add(clientLoan2);
+                    }
+
+                    var loan3 = context.Loans.FirstOrDefault(loan => loan.Name == "Automotriz");
+                    if (loan3 != null)
+                    {
+                        var clientLoan3 = new ClientLoan
+                        {
+                            Amount = 100000,
+                            ClientId = client1.Id,
+                            LoanId = loan3.Id,
+                            Payments = "24"
+                        };
+                        context.ClienLoans.Add(clientLoan3);
+                    }
+
+                    var loan4 = context.Loans.FirstOrDefault(loan => loan.Name == "Amigable");
+                    if (loan4 != null)
+                    {
+                        var clientLoan4 = new ClientLoan
+                        {
+                            Amount = 50000,
+                            ClientId = client1.Id,
+                            LoanId = loan4.Id,
+                            Payments = "3"
+                        };
+                        context.ClienLoans.Add(clientLoan4);
+                    }
                     context.SaveChanges();
                 }
             }

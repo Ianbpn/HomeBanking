@@ -1,6 +1,4 @@
 ﻿using HomeBanking.Database.Models;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.Json.Serialization;
 
 namespace HomeBanking.DTOs
 {
@@ -11,13 +9,16 @@ namespace HomeBanking.DTOs
         public string LastName { get; set; }
         public string Email { get; set; }
         public ICollection<AccountClientDTO> Accounts { get; set; }
+        public ICollection<ClientLoanDTO> Loans { get; set; }
         public ClientDTO(Client client)
         {
             this.Id = client.Id;
             this.FirstName = client.FirstName;
             this.LastName = client.LastName;
             this.Email = client.Email;
-            this.Accounts = client.Accounts.Select(a => new AccountClientDTO(a)).ToList();
+            this.Accounts = client.Accounts.Select(account => new AccountClientDTO(account)).ToList();
+            this.Loans = client.ClientLoans.Select(loan=> new ClientLoanDTO(loan)).ToList();
+
         }
     }
 }
