@@ -1,4 +1,4 @@
-﻿using HomeBanking.Database.Models;
+﻿using HomeBanking.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeBanking.Repositories.Implementations
@@ -15,6 +15,7 @@ namespace HomeBanking.Repositories.Implementations
                 .Include(client=>client.Accounts)
                 .Include(client=>client.ClientLoans)
                     .ThenInclude(client=>client.Loan)
+                .Include(client => client.Cards)
                 .FirstOrDefault();
         }
 
@@ -24,6 +25,7 @@ namespace HomeBanking.Repositories.Implementations
                 .Include(client => client.Accounts)
                 .Include(client => client.ClientLoans)
                     .ThenInclude(client=>client.Loan)
+                .Include(client => client.Cards)
                 .ToList();
         }
 

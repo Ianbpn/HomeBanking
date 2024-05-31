@@ -1,4 +1,4 @@
-﻿using HomeBanking.Database.Models;
+﻿using HomeBanking.Models;
 
 namespace HomeBanking.DTOs
 {
@@ -10,6 +10,7 @@ namespace HomeBanking.DTOs
         public string Email { get; set; }
         public ICollection<AccountClientDTO> Accounts { get; set; }
         public ICollection<ClientLoanDTO> Loans { get; set; }
+        public ICollection<CardDTO> Cards { get; set; }
         public ClientDTO(Client client)
         {
             this.Id = client.Id;
@@ -18,7 +19,7 @@ namespace HomeBanking.DTOs
             this.Email = client.Email;
             this.Accounts = client.Accounts.Select(account => new AccountClientDTO(account)).ToList();
             this.Loans = client.ClientLoans.Select(loan=> new ClientLoanDTO(loan)).ToList();
-
+            this.Cards = client.Cards.Select(card=>new CardDTO(card)).ToList();
         }
     }
 }

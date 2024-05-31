@@ -1,8 +1,8 @@
-﻿namespace HomeBanking.Database.Models
+﻿namespace HomeBanking.Models
 {
     public class ClientLoan
     {
-        public long Id{ get; set; }
+        public long Id { get; set; }
         public string Payments { get; set; }
         public double Amount { get; set; }
         public Client Client { get; set; }

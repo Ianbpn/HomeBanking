@@ -1,4 +1,6 @@
-﻿namespace HomeBanking.Database.Models
+﻿using HomeBanking.Enums;
+
+namespace HomeBanking.Models
 {
     public class DBInitializer
     {
@@ -28,7 +30,8 @@
                 context.SaveChanges();
             }
 
-            if (!context.Accounts.Any()) {
+            if (!context.Accounts.Any())
+            {
                 Client ianClient = context.Clients.FirstOrDefault(cl => cl.Email == "ianb.782@live.com");
                 if (ianClient != null)
                 {
@@ -75,8 +78,8 @@
 
                 //Ahora voy a darle varios prestamos a mi primer usuario
 
-                var client1 = context.Clients.FirstOrDefault(client=>client.Email=="ianb.782@live.com");
-                if (client1!=null)
+                var client1 = context.Clients.FirstOrDefault(client => client.Email == "ianb.782@live.com");
+                if (client1 != null)
                 {
                     //voy a generar manualmente con todos los tipo de prestamo
                     var loan1 = context.Loans.FirstOrDefault(loan => loan.Name == "Hipotecario");
@@ -130,6 +133,52 @@
                         };
                         context.ClienLoans.Add(clientLoan4);
                     }
+                    context.SaveChanges();
+                }
+            }
+            if (!context.Cards.Any())
+            {
+                var client1 = context.Clients.FirstOrDefault(client => client.Email == "ianb.782@live.com");
+                if (client1 != null)
+                {
+                    //Le agrego 3 tipos de tarjetas, 2 de DEBITO de colores GOLD y Silver, y una de CREDITO de color TITANIUM
+                    var cards = new Card[]
+                    {
+                        new Card
+                        {
+                            ClientId=client1.Id,
+                            CardHolder =client1.FirstName + " " + client1.LastName,
+                            Type = CardType.DEBIT.ToString(),
+                            Color = CardColor.GOLD.ToString(),
+                            Number = "3325-6745-7876-4445",
+                            Cvv = 990,
+                            FromDate = DateTime.Now,
+                            ThruDate = DateTime.Now.AddYears(4),
+                        },
+                        new Card
+                        {
+                            ClientId=client1.Id,
+                            CardHolder =client1.FirstName + " " + client1.LastName,
+                            Type = CardType.CREDIT.ToString(),
+                            Color = CardColor.TITANIUM.ToString(),
+                            Number = "2234-6745-552-7888",
+                            Cvv = 750,
+                            FromDate = DateTime.Now,
+                            ThruDate = DateTime.Now.AddYears(4),
+                        },
+                        new Card
+                        {
+                            ClientId=client1.Id,
+                            CardHolder =client1.FirstName + " " + client1.LastName,
+                            Type = CardType.DEBIT.ToString(),
+                            Color = CardColor.SILVER.ToString(),
+                            Number = "2525-7373-6699-2024",
+                            Cvv = 777,
+                            FromDate = DateTime.Now,
+                            ThruDate = DateTime.Now.AddYears(3),
+                        }
+                    };
+                    context.Cards.AddRange(cards);
                     context.SaveChanges();
                 }
             }

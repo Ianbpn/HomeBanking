@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace HomeBanking.Database.Models
+namespace HomeBanking.Models
 {
     public class HomeBankingContext : DbContext
     {
@@ -13,5 +13,6 @@ namespace HomeBanking.Database.Models
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<ClientLoan> ClienLoans { get; set; }
+        public DbSet<Card> Cards { get; set; }
     }
 }

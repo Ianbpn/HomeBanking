@@ -1,4 +1,4 @@
-using HomeBanking.Database.Models;
+using HomeBanking.Models;
 using HomeBanking.Repositories.Implementations;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +17,7 @@ builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+builder.Services.AddScoped<ICardRepository,CardRepository>();
 
 var app = builder.Build();
 

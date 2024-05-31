@@ -27,8 +27,7 @@ namespace HomeBanking.Controllers
             {
                 var clients = _clientRepository.GetAllClients();
                 var clientsDTO = clients.Select(c => new ClientDTO(c)).ToList();
-                return Ok(clientsDTO);
-
+                return StatusCode(StatusCodes.Status200OK, clientsDTO);
             }
             catch (Exception e)
             {

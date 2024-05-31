@@ -1,4 +1,4 @@
-﻿namespace HomeBanking.Database.Models
+﻿namespace HomeBanking.Models
 {
     public class Account
     {

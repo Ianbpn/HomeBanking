@@ -1,4 +1,4 @@
-﻿using HomeBanking.Database.Models;
+﻿using HomeBanking.Models;
 
 namespace HomeBanking.Repositories.Implementations
 {
