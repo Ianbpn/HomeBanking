@@ -8,11 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 // Add context to the container.
+//Se aplica la inyección de dependencia para que los controladores tengan acceso al servicio y puedan utilizar sus metodos
 builder.Services.AddDbContext<HomeBankingContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection"))
     );
 
 //Add context to the container
+//Se aplica la inyección de dependencia para que los controladores tengan acceso al servicio y puedan utilizar sus metodos
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -22,14 +24,14 @@ builder.Services.AddScoped<ICardRepository,CardRepository>();
 var app = builder.Build();
 
 // create a scope to get the context and initialize the database
-
+// el scope es el alcance que se le otorga a la aplicación para utilizar la base de datos y que se ejecutara al iniciar la aplicación
 using(var scope = app.Services.CreateScope())
 {
     try
     {
         var service = scope.ServiceProvider;
         var context = service.GetRequiredService<HomeBankingContext>();
-        DBInitializer.Initialize(context);
+        DBInitializer.Initialize(context); // Otorga los datos iniciales en la base de datos
     }
     catch (Exception ex)
     {

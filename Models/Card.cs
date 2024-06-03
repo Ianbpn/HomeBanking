@@ -1,4 +1,4 @@
-﻿using HomeBanking.Database.Enums;
+﻿using HomeBanking.Enums;
 
 namespace HomeBanking.Models
 {

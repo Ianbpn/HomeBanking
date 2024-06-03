@@ -3,7 +3,8 @@
 namespace HomeBanking.Models
 {
     public class DBInitializer
-    {
+    { 
+        //DBInitializer se enfoca en la carga de datos iniciales para la Base de Datos
         public static void Initialize(HomeBankingContext context)
         {
             if (!context.Clients.Any())

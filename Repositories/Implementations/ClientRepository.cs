@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HomeBanking.Repositories.Implementations
 {
-    public class ClientRepository : RepositoryBase<Client>, IClientRepository
+    public class ClientRepository : RepositoryBase<Client>, IClientRepository //Extiende de RepositoryBase para acceder a sus metodos e implementa la interfaz IClientRepository para asegugar que funciones debe cumplir
     {
         public ClientRepository(HomeBankingContext repositoryContext) : base(repositoryContext)
         {
