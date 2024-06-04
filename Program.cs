@@ -1,11 +1,15 @@
 using HomeBanking.Models;
 using HomeBanking.Repositories.Implementations;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Add context to the container.
 //Se aplica la inyección de dependencia para que los controladores tengan acceso al servicio y puedan utilizar sus metodos
@@ -20,6 +24,21 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ICardRepository,CardRepository>();
+
+//Implementación del sistema de autenticación
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+        options.LoginPath = new PathString("/index.html");
+    });
+
+//Implementación del sistema de autorización
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ClientOnly", policy => policy.RequireClaim("Client"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Admin"));
+});
 
 var app = builder.Build();
 
@@ -46,11 +65,19 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.MapControllers();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
