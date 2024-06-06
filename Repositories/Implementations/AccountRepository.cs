@@ -16,6 +16,19 @@ namespace HomeBanking.Repositories.Implementations
                 .FirstOrDefault();
         }
 
+        public IEnumerable<Account> GetAccountsByClient(long clientId)
+        {
+            return FindByCondition(account=>account.ClientId==clientId)
+                .Include(account => account.Transactions)
+                .ToList();
+        }
+
+        public Account GetAccountByNumber(string number)
+        {
+            return FindByCondition(account=>account.Number==number)
+                .FirstOrDefault();
+        }
+
         public IEnumerable<Account> GetAllAccount()
         {
             return FindAll()

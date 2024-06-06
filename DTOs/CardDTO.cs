@@ -10,12 +10,14 @@ namespace HomeBanking.DTOs
             CardHolder = card.CardHolder;
             Type = card.Type.ToString();
             Color = card.Color.ToString();
+            Cvv = card.Cvv;
             Number = card.Number;
             FromDate = card.FromDate;
-            ThruDate = card.FromDate;
+            ThruDate = card.ThruDate;
         }
 
         public long Id { get; set; }
+        public int Cvv {  get; set; }
         public string CardHolder { get; set; }
         public string Type { get; set; }
         public string Color { get; set; }
