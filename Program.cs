@@ -1,6 +1,7 @@
 using HomeBanking.Models;
 using HomeBanking.Repositories.Implementations;
 using HomeBanking.Services;
+using HomeBanking.Services.Implementations;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ICardRepository,CardRepository>();
 builder.Services.AddScoped<IAccountsService,AccountsService>();
 builder.Services.AddScoped<ICardService,CardService>();
+builder.Services.AddScoped<iClientsService, ClientsService>();
 
 
 //Implementación del sistema de autenticación

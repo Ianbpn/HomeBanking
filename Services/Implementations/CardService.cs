@@ -3,7 +3,7 @@ using HomeBanking.Models;
 using HomeBanking.Repositories.Implementations;
 using System.Security.Cryptography;
 
-namespace HomeBanking.Services
+namespace HomeBanking.Services.Implementations
 {
     public class CardService : ICardService
     {
@@ -17,7 +17,7 @@ namespace HomeBanking.Services
         {
             var lowerBound = 100;
             var upperBound = 1000;
-            int rng = RandomNumberGenerator.GetInt32(lowerBound,upperBound);
+            int rng = RandomNumberGenerator.GetInt32(lowerBound, upperBound);
             return rng;
         }
 

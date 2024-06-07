@@ -3,7 +3,7 @@ using HomeBanking.Repositories.Implementations;
 using Humanizer;
 using System.Security.Cryptography;
 
-namespace HomeBanking.Services
+namespace HomeBanking.Services.Implementations
 {
     public class AccountsService : IAccountsService
     {

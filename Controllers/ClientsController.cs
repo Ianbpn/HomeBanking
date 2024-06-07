@@ -19,9 +19,12 @@ namespace HomeBanking.Controllers
         private readonly IAccountsService _accountsService;
         private readonly ICardRepository _cardRepository;
         private readonly ICardService _cardService;
-        public ClientsController(IClientRepository clientRepository, IAccountRepository accountRepository, IAccountsService accountsService, ICardRepository cardRepository,ICardService cardService)
+        private readonly iClientsService _clientsService;
+        public ClientsController(IClientRepository clientRepository, IAccountRepository accountRepository,
+            IAccountsService accountsService, ICardRepository cardRepository,ICardService cardService , iClientsService clientsService)
         {
             _clientRepository = clientRepository;
+            _clientsService = clientsService;
             _accountRepository = accountRepository;
             _accountsService = accountsService;
             _cardRepository = cardRepository;  
@@ -76,7 +79,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                Client client = _clientRepository.FindByEmail(email);
+                Client client=_clientsService.ReturnCurrentClient(email);
 
                 if (client == null)
                 {
@@ -131,7 +134,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                Client currentClient = _clientRepository.FindByEmail(email);
+                Client currentClient = _clientsService.ReturnCurrentClient(email);
 
                 if (currentClient == null)
                 {
@@ -173,7 +176,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                Client client = _clientRepository.FindByEmail(email);
+                Client client = _clientsService.ReturnCurrentClient(email);
 
                 if (client == null)
                 {
@@ -202,7 +205,7 @@ namespace HomeBanking.Controllers
             {
                 return StatusCode(403, "User not Found");
             }
-            Client currentClient = _clientRepository.FindByEmail(email);
+            Client currentClient = _clientsService.ReturnCurrentClient(email);
 
             if (currentClient == null)
             {
@@ -252,7 +255,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                Client client = _clientRepository.FindByEmail(email);
+                Client client = _clientsService.ReturnCurrentClient(email);
 
                 if (client == null)
                 {
