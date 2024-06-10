@@ -23,9 +23,10 @@ namespace HomeBanking.Repositories.Implementations
                 .ToList();
         }
 
-        public Account GetAccountByNumber(string number)
+        public Account FindByNumber(string number)
         {
             return FindByCondition(account=>account.Number==number)
+                .Include(account => account.Transactions)
                 .FirstOrDefault();
         }
 
@@ -37,8 +38,16 @@ namespace HomeBanking.Repositories.Implementations
 
         public void Save(Account account)
         {
-            Create(account);
+            if (account.Id == 0)
+            {
+                Create(account);
+            }
+            else
+            {
+                Update(account);
+            }
             SaveChanges();
+            RepositoryContext.ChangeTracker.Clear();
         }
     }
 }

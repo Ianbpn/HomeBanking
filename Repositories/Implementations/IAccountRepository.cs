@@ -8,6 +8,6 @@ namespace HomeBanking.Repositories.Implementations
         void Save(Account account);
         Account FindById(long id);
         IEnumerable<Account> GetAccountsByClient(long clientId);
-        Account GetAccountByNumber(string number);
+        Account FindByNumber(string number);
     }
 }

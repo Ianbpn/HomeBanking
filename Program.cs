@@ -29,6 +29,7 @@ builder.Services.AddScoped<ICardRepository,CardRepository>();
 builder.Services.AddScoped<IAccountsService,AccountsService>();
 builder.Services.AddScoped<ICardService,CardService>();
 builder.Services.AddScoped<iClientsService, ClientsService>();
+builder.Services.AddScoped<ITransactionsService,TransactionService>();
 
 
 //Implementación del sistema de autenticación

@@ -14,6 +14,11 @@ namespace HomeBanking.Services.Implementations
             _accountRepository = accountRepository;
         }
 
+        public Account FindAccountByNumber(string number)
+        {
+            return _accountRepository.FindByNumber(number);
+        }
+
         //public string GenerateUniqueNumber()
         //{
         //    try
@@ -44,8 +49,17 @@ namespace HomeBanking.Services.Implementations
             do
             {
                 NumberAccountRandom = "VIN-" + RandomNumberGenerator.GetInt32(0, 99999999);
-            } while (_accountRepository.GetAccountByNumber(NumberAccountRandom) != null);
+            } while (_accountRepository.FindByNumber(NumberAccountRandom) != null);
             return NumberAccountRandom;
+        }
+        public IEnumerable<Account> GetAccountsByClient(long id)
+        {
+            return _accountRepository.GetAccountsByClient(id);
+        }
+
+        public void Save(Account account)
+        {
+            _accountRepository.Save(account);
         }
     }
 }
