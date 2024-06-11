@@ -7,5 +7,6 @@ namespace HomeBanking.Repositories.Implementations
         IEnumerable<Transaction> GetAllTransaction();
         void Save(Transaction transaction);
         Transaction FindById(long id);
+
     }
 }

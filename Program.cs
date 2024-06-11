@@ -21,16 +21,21 @@ builder.Services.AddDbContext<HomeBankingContext>(
 
 //Add context to the container
 //Se aplica la inyección de dependencia para que los controladores tengan acceso al servicio y puedan utilizar sus metodos
+//Inyeccion de Repositorios
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<ICardRepository,CardRepository>();
-builder.Services.AddScoped<IAccountsService,AccountsService>();
-builder.Services.AddScoped<ICardService,CardService>();
-builder.Services.AddScoped<iClientsService, ClientsService>();
-builder.Services.AddScoped<ITransactionsService,TransactionService>();
+builder.Services.AddScoped<IClientLoanRepository, ClientLoanRepository>();
 
+//Inyeccion de Servicios
+builder.Services.AddScoped<IAccountsService, AccountsService>();
+builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<iClientsService, ClientsService>();
+builder.Services.AddScoped<ITransactionsService, TransactionService>();
+builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<IClientLoanService,ClientLoanService>();
 
 //Implementación del sistema de autenticación
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -18,7 +18,7 @@ namespace HomeBanking.Services.Implementations
             _transactionRepository = transactionRepository;
             _accountsService = accountsService;
         }
-        public void NewTransaction(long clientId, NewTransactionDTO newTransactionDTO)
+        public void AccountToAccountTransaction(long clientId, NewTransactionDTO newTransactionDTO)
         {
             try
             {
@@ -60,8 +60,8 @@ namespace HomeBanking.Services.Implementations
                         toAccount.Balance = toAccount.Balance + newTransactionDTO.Amount;
 
                         //Guardamos las nuevas transacciones en la BD
-                        _transactionRepository.Save(DebitTransaction);
-                        _transactionRepository.Save(CreditTransaction);
+                        AddTransaction(DebitTransaction);
+                        AddTransaction(CreditTransaction);
                         //Actualizo ambas cuentas en la BD
                         _accountsService.Save(toAccount);
                         _accountsService.Save(fromAccount);
@@ -111,6 +111,11 @@ namespace HomeBanking.Services.Implementations
             {
                 return true;
             }
+        }
+        
+        public void AddTransaction(Transaction transaction)
+        {
+            _transactionRepository.Save(transaction);
         }
     }
 }

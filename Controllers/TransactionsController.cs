@@ -71,7 +71,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                _transactionsService.NewTransaction(client.Id, newTransactionDTO);
+                _transactionsService.AccountToAccountTransaction(client.Id, newTransactionDTO);
                 return StatusCode(StatusCodes.Status201Created);
             }
             catch (Exception)

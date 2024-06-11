@@ -1,5 +1,9 @@
 ﻿using HomeBanking.DTOs;
+using HomeBanking.Models;
 using HomeBanking.Repositories.Implementations;
+using HomeBanking.Services;
+using HomeBanking.Services.Implementations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeBanking.Controllers
@@ -9,10 +13,18 @@ namespace HomeBanking.Controllers
     public class LoansController : ControllerBase
     {
         private readonly ILoanRepository _loanRepository;
+        private readonly ILoanService _loanService;
+        private readonly iClientsService _clientsService;
+        private readonly IAccountsService _accountsService;
+        private readonly IClientLoanService _clientLoanService;
 
-        public LoansController(ILoanRepository loanRepository)
+        public LoansController(ILoanRepository loanRepository, ILoanService loanService, iClientsService clientsService, IAccountsService accountsService, IClientLoanService clientLoanService)
         {
             _loanRepository = loanRepository;
+            _loanService = loanService;
+            _clientsService = clientsService;
+            _accountsService = accountsService;
+            _clientLoanService = clientLoanService;
         }
 
         [HttpGet]
@@ -45,6 +57,32 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
                 }
+            }
+        }
+        [HttpPost]
+        [Authorize(Policy ="ClientOnly")]
+        public IActionResult AskLoan([FromBody] LoanApplicationDTO loanApplicationDTO)
+        {
+            try
+            {
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : null;
+                if (email == null)
+                {
+                    return StatusCode(403, "User not Found");
+                }
+                Client client = _clientsService.ReturnCurrentClient(email);
+                if (client == null)
+                {
+                    return StatusCode(403, "User not Found");
+                }
+                ClientLoan newClientLoan = _loanService.LoanRequest(loanApplicationDTO,client);
+
+                return Ok(newClientLoan);
+            }
+            catch (Exception e)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
     }
