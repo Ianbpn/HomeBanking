@@ -1,4 +1,5 @@
-﻿using HomeBanking.Models;
+﻿using HomeBanking.DTOs;
+using HomeBanking.Models;
 
 namespace HomeBanking.Services
 {
@@ -6,7 +7,11 @@ namespace HomeBanking.Services
     {
         string GenerateUniqueNumber();
         Account FindAccountByNumber(string number);
-        IEnumerable<Account> GetAccountsByClient(long id);
+        IEnumerable<AccountDTO> GetAccountsByClient(long id);
         void Save(Account account);
+        List<AccountDTO> GetAllAccounts();
+        AccountDTO GetAccountById(long id);
+        bool MaxAccountsReached(List<AccountClientDTO> accounts);
+        public Account newAccount(long clientId);
     }
 }

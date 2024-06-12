@@ -32,10 +32,11 @@ builder.Services.AddScoped<IClientLoanRepository, ClientLoanRepository>();
 //Inyeccion de Servicios
 builder.Services.AddScoped<IAccountsService, AccountsService>();
 builder.Services.AddScoped<ICardService, CardService>();
-builder.Services.AddScoped<iClientsService, ClientsService>();
+builder.Services.AddScoped<IClientsService, ClientsService>();
 builder.Services.AddScoped<ITransactionsService, TransactionService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
 builder.Services.AddScoped<IClientLoanService,ClientLoanService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 //Implementación del sistema de autenticación
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -5,7 +5,8 @@ namespace HomeBanking.Services
 {
     public interface ILoanService
     {
-        ClientLoan LoanRequest(LoanApplicationDTO loanApplicationDTO, Client client);
+        ClientLoan LoanRequest(LoanApplicationDTO loanApplicationDTO, ClientDTO client);
         Loan FindLoanById(long id);
+        List<LoanDTO> GetAllLoans();
     }
 }

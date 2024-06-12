@@ -9,5 +9,7 @@ namespace HomeBanking.Services
         bool VerifyDataFromPost(NewTransactionDTO transactionDTO);
         bool DoesAccountExist(string accountNumber);
         void AddTransaction(Transaction transaction);
+        List<TransactionDTO> GetAllTransactions();
+        TransactionDTO GetTransactionById(long id);
     }
 }

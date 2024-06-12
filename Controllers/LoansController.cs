@@ -1,8 +1,7 @@
 ﻿using HomeBanking.DTOs;
+using HomeBanking.Exceptions;
 using HomeBanking.Models;
-using HomeBanking.Repositories.Implementations;
 using HomeBanking.Services;
-using HomeBanking.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,19 +11,13 @@ namespace HomeBanking.Controllers
     [ApiController]
     public class LoansController : ControllerBase
     {
-        private readonly ILoanRepository _loanRepository;
         private readonly ILoanService _loanService;
-        private readonly iClientsService _clientsService;
-        private readonly IAccountsService _accountsService;
-        private readonly IClientLoanService _clientLoanService;
+        private readonly IClientsService _clientsService;
 
-        public LoansController(ILoanRepository loanRepository, ILoanService loanService, iClientsService clientsService, IAccountsService accountsService, IClientLoanService clientLoanService)
+        public LoansController(ILoanService loanService, IClientsService clientsService)
         {
-            _loanRepository = loanRepository;
             _loanService = loanService;
             _clientsService = clientsService;
-            _accountsService = accountsService;
-            _clientLoanService = clientLoanService;
         }
 
         [HttpGet]
@@ -32,8 +25,7 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var loans = _loanRepository.GetAllLoans();
-                var loansDTO = loans.Select(loans => new LoanDTO(loans)).ToList();
+                var loansDTO = _loanService.GetAllLoans();
                 return Ok(loansDTO);
             }
             catch (Exception e)
@@ -48,9 +40,8 @@ namespace HomeBanking.Controllers
             {
                 try
                 {
-                    var loan = _loanRepository.GetLoanById(id);
-                    var loanDTO = new LoanDTO(loan);
-                    return Ok(loanDTO);
+                    var loan = _loanService.FindLoanById(id);
+                    return Ok(loan);
 
                 }
                 catch (Exception e)
@@ -70,7 +61,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                Client client = _clientsService.ReturnCurrentClient(email);
+                ClientDTO client = _clientsService.FindClientByEmail(email);
                 if (client == null)
                 {
                     return StatusCode(403, "User not Found");
@@ -79,10 +70,9 @@ namespace HomeBanking.Controllers
 
                 return Ok(newClientLoan);
             }
-            catch (Exception e)
+            catch (CustomException ex)
             {
-
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                return StatusCode(ex.statusCode, ex.message);
             }
         }
     }

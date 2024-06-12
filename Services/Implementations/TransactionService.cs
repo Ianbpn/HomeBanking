@@ -32,7 +32,7 @@ namespace HomeBanking.Services.Implementations
                         var toAccount = _accountsService.FindAccountByNumber(newTransactionDTO.ToAccountNumber);
                         if (fromAccount.Balance < newTransactionDTO.Amount) //Verifico que la cuenta de Origen tenga los fondos suficientes
                         {
-                            throw new CustomException("Esta cuenta no tiene los fondos suficientes", HttpStatusCode.BadRequest);
+                            throw new CustomException("Esta cuenta no tiene los fondos suficientes", 400);
                         }
                         //Genero ambas transacciones
                         var DebitTransaction = new Transaction
@@ -68,35 +68,43 @@ namespace HomeBanking.Services.Implementations
                     }
                     else
                     {
-                        throw new CustomException("Esta cuenta no pertenece al usuario", HttpStatusCode.BadRequest);
+                        throw new CustomException("Esta cuenta no pertenece al usuario", 400);
                     }
                 }
             }
-            catch (CustomException)
+            catch (CustomException ex)
             {
                 {
-                    throw;
+                    throw new CustomException(ex.message, ex.statusCode);
                 }
             }
         }
 
         public bool VerifyDataFromPost(NewTransactionDTO transactionDTO)
         {
-            //Verifico que todos los campos provenientes del Front esten correctamente cargados
-            if (transactionDTO.FromAccountNumber.IsNullOrEmpty() || transactionDTO.ToAccountNumber.IsNullOrEmpty()
-                || transactionDTO.Description.IsNullOrEmpty() || transactionDTO.Amount <= 0)
+            try
             {
-                throw new CustomException("Verificar los campos vacios", HttpStatusCode.BadRequest);
+                //Verifico que todos los campos provenientes del Front esten correctamente cargados
+                if (transactionDTO.FromAccountNumber.IsNullOrEmpty() || transactionDTO.ToAccountNumber.IsNullOrEmpty()
+                    || transactionDTO.Description.IsNullOrEmpty() || transactionDTO.Amount <= 0)
+                {
+                    throw new CustomException("Verificar los campos vacios", 400);
+                }
+                //Reviso que los numeros de cuentas no sean identicos
+                else if (transactionDTO.ToAccountNumber.Equals(transactionDTO.FromAccountNumber))
+                {
+                    throw new CustomException("Los numeros de cuenta no pueden ser identicos", 400);
+                }
+                //Busco en la base de datos si las cuentas existen
+                if (!DoesAccountExist(transactionDTO.FromAccountNumber) || !DoesAccountExist(transactionDTO.ToAccountNumber))
+                {
+                    throw new CustomException($"Una de las cuentas no a sido encontrada", 400);
+                }
             }
-            //Reviso que los numeros de cuentas no sean identicos
-            else if (transactionDTO.ToAccountNumber.Equals(transactionDTO.FromAccountNumber))
+            catch (CustomException ex)
             {
-                throw new CustomException("Los numeros de cuenta no pueden ser identicos", HttpStatusCode.BadRequest);
-            }
-            //Busco en la base de datos si las cuentas existen
-            if (!DoesAccountExist(transactionDTO.FromAccountNumber) || !DoesAccountExist(transactionDTO.ToAccountNumber))
-            {
-                throw new CustomException($"Una de las cuentas no a sido encontrada", HttpStatusCode.BadRequest);
+
+                throw new CustomException(ex.message, ex.statusCode);
             }
             return true;
         }
@@ -116,6 +124,20 @@ namespace HomeBanking.Services.Implementations
         public void AddTransaction(Transaction transaction)
         {
             _transactionRepository.Save(transaction);
+        }
+
+        public List<TransactionDTO> GetAllTransactions()
+        {
+            var transactions = _transactionRepository.GetAllTransaction();
+            var transactionsDTO = transactions.Select(t => new TransactionDTO(t)).ToList();
+            return transactionsDTO;
+        }
+
+        public TransactionDTO GetTransactionById(long id)
+        {
+            var transaction = _transactionRepository.FindById(id);
+            var transactionDTO = new TransactionDTO(transaction);
+            return transactionDTO;
         }
     }
 }

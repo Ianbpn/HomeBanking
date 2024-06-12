@@ -1,5 +1,6 @@
 ﻿using HomeBanking.DTOs;
 using HomeBanking.Repositories.Implementations;
+using HomeBanking.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeBanking.Controllers
@@ -8,10 +9,10 @@ namespace HomeBanking.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private readonly IAccountRepository _accountRepository;
-        public AccountsController(IAccountRepository accountRepository)
+        private readonly IAccountsService _accountsService;
+        public AccountsController(IAccountsService accountsService)
         {
-            _accountRepository = accountRepository;
+            _accountsService = accountsService; 
         }
 
         [HttpGet]
@@ -19,14 +20,12 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var accounts = _accountRepository.GetAllAccount();
-                var accountsDTO = accounts.Select(a => new AccountDTO(a)).ToList();
-                return Ok(accountsDTO);
+                var accounts = _accountsService.GetAllAccounts();
+                return Ok(accounts);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                  e.Message);
+                return StatusCode(500, ex.Message);
             }
         }
         [HttpGet("{id}")]
@@ -34,14 +33,12 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var account= _accountRepository.FindById(id);
-                var accountDTO = new AccountDTO(account);
-                return Ok(accountDTO);
+                var account = _accountsService.GetAccountById(id);
+                return Ok(account);
             }
-            catch (Exception e) 
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                  e.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }

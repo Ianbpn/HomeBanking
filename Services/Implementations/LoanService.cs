@@ -10,11 +10,11 @@ namespace HomeBanking.Services.Implementations
     public class LoanService : ILoanService
     {
         private readonly ILoanRepository _loanRepository;
-        private readonly iClientsService _clientsService;
+        private readonly IClientsService _clientsService;
         private readonly IAccountsService _accountsService;
         private readonly IClientLoanService _clientLoanService;
         private readonly ITransactionsService _transactionsService;
-        public LoanService(ILoanRepository loanRepository, iClientsService clientsService, IAccountsService accountsService, IClientLoanService clientLoanService, ITransactionsService transactionsService)
+        public LoanService(ILoanRepository loanRepository, IClientsService clientsService, IAccountsService accountsService, IClientLoanService clientLoanService, ITransactionsService transactionsService)
         {
             _loanRepository = loanRepository;
             _clientsService = clientsService;
@@ -28,14 +28,23 @@ namespace HomeBanking.Services.Implementations
             return _loanRepository.GetLoanById(id);
         }
 
-        public ClientLoan LoanRequest(LoanApplicationDTO loanApplicationDTO, Client client)
+        public List<LoanDTO> GetAllLoans()
         {
-            if (VerifyDataFromPost(loanApplicationDTO) && VerifyIfLoanMeetsRequest(loanApplicationDTO))
+            var loans = _loanRepository.GetAllLoans();
+            var loansDTO = loans.Select(loans => new LoanDTO(loans)).ToList();
+            return loansDTO;
+        }
+
+        public ClientLoan LoanRequest(LoanApplicationDTO loanApplicationDTO, ClientDTO client)
+        {
+            try
             {
+                if (VerifyDataFromPost(loanApplicationDTO) && VerifyIfLoanMeetsRequest(loanApplicationDTO))
+                {
                 // Traigo la cuenta referida y reviso si es una cuenta del cliente
                 var accounts = _accountsService.GetAccountsByClient(client.Id); //Busco las cuenta del usuario autenticado
                 if (!accounts.Any(accs=>accs.Number == loanApplicationDTO.ToAccountNumber)) {
-                    throw new CustomException("La cuenta no pertenece al Usuario", HttpStatusCode.BadRequest);
+                    throw new CustomException("La cuenta no pertenece al Usuario", 400);
                 }
                 else
                 {
@@ -71,44 +80,65 @@ namespace HomeBanking.Services.Implementations
 
                     return clientLoan;
                 }
-
+                }
+                throw new CustomException("Error de verificaciones",400);
             }
-            throw new CustomException("Error de verificaciones",HttpStatusCode.Forbidden);
+            catch (CustomException ex)
+            {
+
+                throw new CustomException(ex.message, ex.statusCode);
+            }
         }
 
         public bool VerifyDataFromPost(LoanApplicationDTO loanApplicationDTO)
         {
-            //verifico que lleguen bien los datos
-            if (loanApplicationDTO.ToAccountNumber.IsNullOrEmpty() || loanApplicationDTO.LoanId <= 0 ||
-                loanApplicationDTO.Payments.IsNullOrEmpty() || loanApplicationDTO.Amount <= 0)
+            try
             {
-                throw new CustomException("Verificar los campos vacios", HttpStatusCode.BadRequest);
+                //verifico que lleguen bien los datos
+                if (loanApplicationDTO.ToAccountNumber.IsNullOrEmpty() || loanApplicationDTO.LoanId <= 0 ||
+                    loanApplicationDTO.Payments.IsNullOrEmpty() || loanApplicationDTO.Amount <= 0)
+                {
+                    throw new CustomException("Verificar los campos vacios", 403);
+                }
+                if (_loanRepository.GetLoanById(loanApplicationDTO.LoanId) == null)
+                {
+                    throw new CustomException("El Tipo de prestamo no se ha encontrado", 403);
+                }
+                if(_accountsService.FindAccountByNumber(loanApplicationDTO.ToAccountNumber)==null)
+                {
+                    throw new CustomException("La cuenta referida no existe", 403);
+                }
+                return true;
             }
-            if (_loanRepository.GetLoanById(loanApplicationDTO.LoanId) == null)
+            catch (CustomException ex)
             {
-                throw new CustomException("El Tipo de prestamo no se ha encontrado", HttpStatusCode.BadRequest);
+
+                throw new CustomException(ex.message, ex.statusCode);
             }
-            if(_accountsService.FindAccountByNumber(loanApplicationDTO.ToAccountNumber)==null)
-            {
-                throw new CustomException("La cuenta referida no existe", HttpStatusCode.BadRequest);
-            }
-            return true;
         }
         public bool VerifyIfLoanMeetsRequest(LoanApplicationDTO loanApplicationDTO)
         {
-            var compareTo = _loanRepository.GetLoanById(loanApplicationDTO.LoanId);
-            //Verifico que el prestamo permita la cantidad de cuotas
-            if (!compareTo.Paymnets.Contains(loanApplicationDTO.Payments))
+            try
             {
-                throw new CustomException("Este prestamo no soporta esta cantidad de cuotas", HttpStatusCode.BadRequest);
-            }
-            else
-            {
-                if (compareTo.MaxAmount < loanApplicationDTO.Amount)
+                var compareTo = _loanRepository.GetLoanById(loanApplicationDTO.LoanId);
+                //Verifico que el prestamo permita la cantidad de cuotas
+                if (!compareTo.Paymnets.Contains(loanApplicationDTO.Payments))
                 {
-                    throw new CustomException("El monto requerido excede el limite permitido para este prestamo", HttpStatusCode.BadRequest);
+                    throw new CustomException("Este prestamo no soporta esta cantidad de cuotas", 403);
                 }
-                return true;
+                else
+                {
+                    if (compareTo.MaxAmount < loanApplicationDTO.Amount)
+                    {
+                        throw new CustomException("El monto requerido excede el limite permitido para este prestamo", 403);
+                    }
+                    return true;
+                }
+            }
+            catch (CustomException ex)
+            {
+
+                throw new CustomException(ex.message, ex.statusCode);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using HomeBanking.DTOs;
 using HomeBanking.Repositories.Implementations;
+using HomeBanking.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +10,11 @@ namespace HomeBanking.Controllers
     [ApiController]
     public class CardsController : ControllerBase
     {
-        private readonly ICardRepository _cardRepository;
+        private readonly ICardService _cardService;
 
-        public CardsController(ICardRepository cardRepository)
+        public CardsController(ICardService cardService)
         {
-            _cardRepository = cardRepository;
+            _cardService = cardService;
         }
 
         [HttpGet]
@@ -21,9 +22,8 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var cards = _cardRepository.GetAllCards();
-                var cardsDTO = cards.Select(cards => new CardDTO(cards)).ToList();
-                return StatusCode(StatusCodes.Status200OK, cardsDTO);
+                var cards = _cardService.GetAllCards();
+                return StatusCode(StatusCodes.Status200OK, cards);
             }
             catch (Exception ex)
             {
@@ -36,9 +36,8 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var card = _cardRepository.GetCardById(id);
-                var cardDTO = new CardDTO(card);
-                return StatusCode(StatusCodes.Status200OK, cardDTO);
+                var card = _cardService.GetCardById(id);                
+                return StatusCode(StatusCodes.Status200OK, card);
             }
             catch (Exception ex)
             {

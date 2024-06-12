@@ -1,12 +1,9 @@
 ﻿using HomeBanking.DTOs;
-using HomeBanking.Models;
-using HomeBanking.Repositories.Implementations;
+using HomeBanking.Exceptions;
 using HomeBanking.Services;
-using HomeBanking.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace HomeBanking.Controllers
 {
@@ -14,15 +11,13 @@ namespace HomeBanking.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly ITransactionRepository _transactionRepository;
         private readonly ITransactionsService _transactionsService;
-        private readonly iClientsService _clientsService;
+        private readonly IClientsService _clientsService;
         private readonly IAccountsService _accountsService;
 
-        public TransactionsController(ITransactionRepository transactionRepository, ITransactionsService transactionsService,
-            iClientsService clientsService,IAccountsService accountsService)
+        public TransactionsController( ITransactionsService transactionsService,
+            IClientsService clientsService,IAccountsService accountsService)
         {
-            _transactionRepository = transactionRepository;
             _transactionsService = transactionsService;
             _clientsService = clientsService;
             _accountsService = accountsService;
@@ -33,9 +28,8 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var transactions = _transactionRepository.GetAllTransaction();
-                var transactionsDTO = transactions.Select(t=> new TransactionDTO(t)).ToList();
-                return Ok(transactionsDTO);
+                var transactions = _transactionsService.GetAllTransactions();
+                return Ok(transactions);
             }
             catch (Exception e)
             {
@@ -47,9 +41,8 @@ namespace HomeBanking.Controllers
         {
             try
             {
-                var transaction = _transactionRepository.FindById(id);
-                var transactionDTO = new TransactionDTO(transaction);
-                return Ok(transactionDTO);
+                var transaction = _transactionsService.GetTransactionById(id);
+                return Ok(transaction);
             }
             catch (Exception e) {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
@@ -66,7 +59,7 @@ namespace HomeBanking.Controllers
                 {
                     return StatusCode(403, "User not Found");
                 }
-                var client = _clientsService.ReturnCurrentClient(email);
+                var client = _clientsService.FindClientByEmail(email);
                 if (client == null)
                 {
                     return StatusCode(403, "User not Found");
@@ -74,11 +67,11 @@ namespace HomeBanking.Controllers
                 _transactionsService.AccountToAccountTransaction(client.Id, newTransactionDTO);
                 return StatusCode(StatusCodes.Status201Created);
             }
-            catch (Exception)
+            catch (CustomException ex)
             {
 
-                throw;
+                return StatusCode(ex.statusCode, ex.message);
             }
         }
     }
-}
+ }
